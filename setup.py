@@ -12,7 +12,7 @@ setup(
     author_email='idohaineman@gmail.com',
     keywords=['rpi'],
     url='https://github.com/GreenBlitz/GBRPi',
-    download_url='https://github.com/GreenBlitz/GBVision/archive/v0.4.1-beta.tar.gz',
+    download_url='https://github.com/GreenBlitz/GBRPi/archive/v0.0.1.tar.gz',
     install_requires=[
         'pynetworktables',
         'pigpio'
