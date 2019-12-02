@@ -10,5 +10,6 @@ def main():
         time.sleep(5)
         led_ring.off()
 
+
 if __name__ == '__main__':
     main()
