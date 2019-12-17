@@ -47,3 +47,4 @@ class I2C:
             msg = i2c_msg.read(self.input_addr, msg_len)
             bus.i2c_rdwr(msg)
             return list(bytes(msg))
+
