@@ -2,9 +2,10 @@ from typing import List
 
 from smbus2 import SMBus, i2c_msg
 
+
 class I2C:
     @staticmethod
-    def __prep_data(data: List[int]) -> List[int]:
+    def __get_length(data: List[int]) -> List[int]:
         ln = len(data)
         arr = [0, 0, 0, 0]
         for i in range(4):
@@ -13,7 +14,7 @@ class I2C:
         return arr + data
 
     @staticmethod
-    def __get_read_length(bytelength: List[int]) -> int:
+    def __read_length(bytelength: List[int]) -> int:
         result = 0
         for i in range(4):
             result <<= 8
@@ -30,7 +31,7 @@ class I2C:
         """
 
         """
-        data = self.__prep_data(data)
+        data = self.__get_length(data)
         with SMBus(self.bus, force=self.force) as bus:
             msg = i2c_msg.write(self.output_addr, data)
             bus.i2c_rdwr(msg)
@@ -43,8 +44,19 @@ class I2C:
             msg = i2c_msg.read(self.input_addr, 4)
             bus.i2c_rdwr(msg)
             length = list(bytes(msg))
-            msg_len = self.__get_read_length(list(bytes(msg)))
+            msg_len = self.__read_length(length)
             msg = i2c_msg.read(self.input_addr, msg_len)
             bus.i2c_rdwr(msg)
             return list(bytes(msg))
 
+
+def main():
+    i2c = I2C(1, 0)
+    data = [123, 123, 78, 42, 39]
+    i2c.send(data)
+    print(i2c.receive())
+    # should print 3, 52, 20, 127, 9
+
+
+if __name__ == '  main  ':
+    main()
