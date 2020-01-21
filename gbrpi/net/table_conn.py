@@ -1,7 +1,10 @@
-from typing import Callable, Any
+from typing import Callable, T, Union
+from collections.abc import Iterable
 
 from networktables import NetworkTables
 from networktables.networktable import NetworkTable
+
+from gbrpi.constants.types import ConnEntryValue
 
 
 class TableConn:
@@ -14,17 +17,9 @@ class TableConn:
     :param table_name: the network table's name
     :param initialize: whether or not to initialize the network tables (default is true)
     """
-    # NetworkTables notifier kinds.
-    NT_NOTIFY_NONE = 0x00
-    NT_NOTIFY_IMMEDIATE = 0x01  # initial listener addition
-    NT_NOTIFY_LOCAL = 0x02  # changed locally
-    NT_NOTIFY_NEW = 0x04  # newly created entry
-    NT_NOTIFY_DELETE = 0x08  # deleted
-    NT_NOTIFY_UPDATE = 0x10  # value changed
-    NT_NOTIFY_FLAGS = 0x20  # flags changed
 
     @staticmethod
-    def __fix_func(func: Callable[[Any], None]):
+    def __fix_func(func: Callable[[ConnEntryValue], None]):
         return lambda source, key, value, is_new: func(value)
 
     def __init__(self, ip: str, table_name: str, initialize=True):
@@ -40,7 +35,7 @@ class TableConn:
         """
         self.table = table
 
-    def get(self, key: str, default: Any = None) -> Any:
+    def get(self, key: str, default: T = None) -> Union[ConnEntryValue, T]:
         """
         retrieve a value from the network table
 
@@ -50,15 +45,18 @@ class TableConn:
         """
         return self.table.getValue(key, default)
 
-    def set(self, key: str, value: Any):
+    def set(self, key: str, value: ConnEntryValue):
         """
         sets a value in the network table
         :param key:
         :param value:
         """
+        if isinstance(value, Iterable) and type(value) not in [bytes, str]:
+            value = tuple(value)
         self.table.putValue(key, value)
 
-    def add_entry_change_listener(self, func: Callable[[Any], None], key: str, notify_now=True, notify_local=True):
+    def add_entry_change_listener(self, func: Callable[[ConnEntryValue], None], key: str, notify_now=True,
+                                  notify_local=True):
         """
         add a function to be called every time a specific entry is changed on the vision table
 

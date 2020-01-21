@@ -2,23 +2,24 @@ from setuptools import setup
 
 setup(
     name='gbrpi',
-    version='0.0.1',
-    description='A python library for rpi related stuff used for frc',
+    version='0.0.2',
+    description='A python library for Raspberry Pi operations used for FRC',
     license='Apache License 2.0',
     packages=['gbrpi',
               'gbrpi/electronics',
-              'gbrpi/net'],
+              'gbrpi/net',
+              'gbrpi/constants'],
     author='Ido Heinemann',
     author_email='idohaineman@gmail.com',
-    keywords=['rpi'],
+    keywords=['rpi', 'raspberry pi', 'frc'],
     url='https://github.com/GreenBlitz/GBRPi',
-    download_url='https://github.com/GreenBlitz/GBRPi/archive/v0.0.1.tar.gz',
+    download_url='https://github.com/GreenBlitz/GBRPi/archive/v0.0.2.tar.gz',
     install_requires=[
         'pynetworktables',
         'pigpio'
     ],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 3 - Alpha',
         # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
 
         'Intended Audience :: Developers',  # Define that your audience are developers
