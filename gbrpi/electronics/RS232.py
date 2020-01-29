@@ -34,9 +34,11 @@ class RS232:
 
 def main():
     data = [123, 123, 78, 42, 39]
+    rs = RS232()
+    rs.send(data)
+    print(rs.recive())
     # should print 3, 52, 20, 127, 9
 
 
-if __name__ == '  main  ':
+if __name__ == '__main__':
     main()
-# https://github.com/WilliamHuang-cn/2017FRCVisionTrial/wiki/Using-a-coprocessor-with-RoboRIO
