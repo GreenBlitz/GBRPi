@@ -1,5 +1,5 @@
 from typing import List
-
+import serial
 
 class RS232:
     @staticmethod
@@ -19,8 +19,18 @@ class RS232:
             result |= bytelength[i]
         return result
 
-    def __init__(self,):pass
-
+    def send(self, data):
+        ser = serial.Serial('/dev/ttyS0')
+        ser.open()
+        ser.write(RS232.__get_length(data))
+        ser.close()
+    def recive(self):
+        ser = serial.Serial('/dev/ttyS0')
+        ser.open()
+        length = ser.read(4)
+        data = ser.read(RS232.__read_length(length))
+        ser.close()
+        return data
 
 def main():
     data = [123, 123, 78, 42, 39]
