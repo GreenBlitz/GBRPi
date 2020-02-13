@@ -1,6 +1,7 @@
 from typing import List
 import serial
 
+
 class RS232:
     @staticmethod
     def __get_length(data: List[int]) -> List[int]:
@@ -24,6 +25,7 @@ class RS232:
         ser.open()
         ser.write(RS232.__get_length(data))
         ser.close()
+
     def recive(self):
         ser = serial.Serial('/dev/ttyS0')
         ser.open()
@@ -31,6 +33,7 @@ class RS232:
         data = ser.read(RS232.__read_length(length))
         ser.close()
         return data
+
 
 def main():
     data = [123, 123, 78, 42, 39]
