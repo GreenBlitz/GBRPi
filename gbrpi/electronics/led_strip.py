@@ -1,35 +1,43 @@
+from typing import Tuple
+
 from gbrpi.electronics.gpio_device import GPIODevice
-import board
-import neopixel
-from gbrpi.constants import led_strip
 
-class LedStrip(object):
 
-    def __init__(self):
-        self.pixels = neopixel.NeoPixel(led_strip.port, led_strip.amount)
+class LedStrip:
+
+    def __init__(self, port, amount):
+        self.port = port
+        self.amount = amount
+        try:
+            import board
+            import neopixel
+        except ImportError:
+            import sys
+            print("You do not have the neopixel module installed, please install it in order to use the led strip",
+                  file=sys.stderr)
+            return
+        self.pixels = neopixel.NeoPixel(port, amount)
         self.pixels.auto_write = True
 
-
-    def color_range(self, ports: tuple[int, int], color: tuple[int, int, int]):
+    def color_range(self, low: int, high: int, color: Tuple[int, int, int]):
         """
         turns the LEDs from index low to high on led strip in color
         """
-        low = min(ports[0], led_strip.amount - 1)
-        high = min(ports[1], led_strip.amount - 1)
+        low = min(low, self.amount - 1)
+        high = min(high, self.amount - 1)
         for i in range(low, high):
             self.color_pixel(i, color)
 
-    def color_pixel(self, loc: int, color: tuple[int, int, int]):
+    def color_pixel(self, loc: int, color: Tuple[int, int, int]):
         self.pixels[loc] = color
 
-    def color_jump(self, init_loc: int, jump: int, color: tuple[int, int, int], batch: int = 1):
-        while init_loc < led_strip.amount:
-            self.color_range((init_loc, init_loc + batch - 1), (color))
+    def color_jump(self, init_loc: int, jump: int, color: Tuple[int, int, int], batch: int = 1):
+        while init_loc < self.amount:
+            self.color_range((init_loc, init_loc + batch - 1), color)
             init_loc += jump + batch
 
-
     def off(self):
-        '''
+        """
         turns the led strip off
-        '''
-        self.color_range((0, led_strip.amount - 1), (0, 0, 0))
+        """
+        self.color_range((0, self.amount - 1), (0, 0, 0))
