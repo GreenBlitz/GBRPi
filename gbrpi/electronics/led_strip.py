@@ -33,11 +33,11 @@ class LedStrip:
 
     def color_jump(self, init_loc: int, jump: int, color: Tuple[int, int, int], batch: int = 1):
         while init_loc < self.amount:
-            self.color_range((init_loc, init_loc + batch - 1), color)
+            self.color_range(init_loc, init_loc + batch - 1, color)
             init_loc += jump + batch
 
     def off(self):
         """
         turns the led strip off
         """
-        self.color_range((0, self.amount - 1), (0, 0, 0))
+        self.color_range(0, self.amount - 1, (0, 0, 0))
