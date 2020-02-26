@@ -1,6 +1,6 @@
 import struct
 from threading import Thread
-from typing import List
+from typing import List, Optional
 
 import serial
 
@@ -12,14 +12,14 @@ class RS232:
     def __init__(self, dev_name: str, algo_list: List[str]):
         self.conn: serial.Serial = serial.Serial(dev_name, baudrate=BAUD_RATE)
         self.algo: str = DEFAULT_ALGO
-        self.latest_data: List[int] = None
+        self.latest_data: Optional[List[int]] = None
         self.algo_list: List[str] = algo_list
         self.handler_map = {
             0: (self.ping_handler, 50),
             1: (self.get_handler, 0),
             2: (self.set_algo_handler, 1)
         }
-        self.handler_thread: Thread = None
+        self.handler_thread: Optional[Thread] = None
 
     def send_success(self):
         self.conn.write(bytes("\x01", encoding="ascii"))
