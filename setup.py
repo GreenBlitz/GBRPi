@@ -16,7 +16,8 @@ setup(
     download_url='https://github.com/GreenBlitz/GBRPi/archive/v0.0.2.tar.gz',
     install_requires=[
         'pynetworktables',
-        'pigpio'
+        'pigpio',
+        'pyserial'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
