@@ -13,7 +13,7 @@ setup(
     author_email='idohaineman@gmail.com',
     keywords=['rpi', 'raspberry pi', 'frc'],
     url='https://github.com/GreenBlitz/GBRPi',
-    download_url='https://github.com/GreenBlitz/GBRPi/archive/v0.0.2.tar.gz',
+    download_url='https://github.com/GreenBlitz/GBRPi/archive/v0.0.3.tar.gz',
     install_requires=[
         'pynetworktables',
         'pigpio',
