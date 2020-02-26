@@ -15,7 +15,7 @@ class RS232:
         self.latest_data: List[int] = None
         self.algo_list: List[str] = algo_list
         self.handler_map = {
-            0: (self.ping_handler, 0),
+            0: (self.ping_handler, 50),
             1: (self.get_handler, 0),
             2: (self.set_algo_handler, 1)
         }
@@ -46,7 +46,7 @@ class RS232:
                 curr_handler[0](data)
 
     def ping_handler(self, data: bytes):
-        self.send_success()
+        self.conn.write(data)
 
     def set_algo_handler(self, data: bytes):
         algo_index: int = data[0]
