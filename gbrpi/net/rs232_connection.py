@@ -5,10 +5,10 @@ import time
 
 import serial
 
-from gbrpi.constants.rs232 import BAUD_RATE, DEFAULT_ALGO, DOUBLE_SIZE
+from gbrpi.constants.uart import BAUD_RATE, DEFAULT_ALGO, DOUBLE_SIZE
 
 
-class RS232:
+class UART:
 
     def __init__(self, dev_name: str, algo_list: List[str], ping_size: int, baud_rate: int = BAUD_RATE):
         self.conn: serial.Serial = serial.Serial(dev_name, baudrate=baud_rate)
@@ -33,7 +33,7 @@ class RS232:
     def start_handler_thread(self):
         self.handler_thread = Thread(target=self.handler)
         self.conn.flushInput()
-        self.handler_thread.setName("RS232Listenerd")
+        self.handler_thread.setName("UARTListenerd")
         self.handler_thread.setDaemon(True)
         time.sleep(1)
         self.send_success()
