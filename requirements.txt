@@ -1,3 +1,4 @@
 pynetworktables
 pigpio
 pyserial
+numpy
