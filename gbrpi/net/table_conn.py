@@ -1,4 +1,4 @@
-from typing import Callable, T, Union
+from typing import Callable, Union, Any
 from collections.abc import Iterable
 
 from networktables import NetworkTables
@@ -35,7 +35,7 @@ class TableConn:
         """
         self.table = table
 
-    def get(self, key: str, default: T = None) -> Union[ConnEntryValue, T]:
+    def get(self, key: str, default: Any = None) -> Union[ConnEntryValue, Any]:
         """
         retrieve a value from the network table
 
@@ -55,7 +55,8 @@ class TableConn:
             value = tuple(value)
         self.table.putValue(key, value)
 
-    def add_entry_change_listener(self, func: Callable[[ConnEntryValue], None], key: str, notify_now=True, notify_local=True):
+    def add_entry_change_listener(self, func: Callable[[ConnEntryValue], None], key: str, notify_now=True,
+                                  notify_local=True):
         """
         add a function to be called every time a specific entry is changed on the vision table
 
