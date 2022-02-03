@@ -54,7 +54,7 @@ class UART:
         """
         while True:
             # Read byte
-            req = self.conn.read(1)[0]
+            req = self.conn.read()[0]
             # If we have a command that matches this byte
             if req in self.handler_map:
                 # Get the matching (command, size) tuple
