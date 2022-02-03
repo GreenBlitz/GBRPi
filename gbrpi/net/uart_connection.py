@@ -81,7 +81,9 @@ class UART:
         self.send_success()
 
     def get_handler(self, data: bytes):
-        if self.latest_data is None or type(self.latest_data) != type([]) or len(self.latest_data) != 3:
+        if self.latest_data is None \
+                or isinstance(self.latest_data, list) \
+                or len(self.latest_data) != 3:
             self.conn.write(bytes("\x00" * (1 + DOUBLE_SIZE * 3), encoding="ascii"))
             return
         self.send_success()
