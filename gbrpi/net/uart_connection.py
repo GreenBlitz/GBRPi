@@ -82,7 +82,7 @@ class UART:
 
     def get_handler(self, data: bytes):
         if self.latest_data is None \
-                or isinstance(self.latest_data, list) \
+                or not isinstance(self.latest_data, list) \
                 or len(self.latest_data) != 3:
             self.conn.write(bytes("\x00" * (1 + DOUBLE_SIZE * 3), encoding="ascii"))
             return
