@@ -8,6 +8,7 @@ import serial
 from gbrpi.constants.uart import BAUD_RATE, DEFAULT_ALGO, DOUBLE_SIZE
 
 
+# noinspection PyUnusedClass
 class UART:
 
     def __init__(self, dev_name: str, algo_list: List[str], ping_size: int, baud_rate: int = BAUD_RATE):
@@ -19,8 +20,7 @@ class UART:
         self.handler_map = {
             0: (self.ping_handler, ping_size),
             1: (self.get_handler, 0),
-            2: (self.set_algo_handler, 1),
-            3: (self.conn_start_handler, 0)
+            2: (self.set_algo_handler, 1)
         }
         self.handler_thread: Optional[Thread] = None
 
@@ -30,7 +30,15 @@ class UART:
     def send_fail(self):
         self.conn.write(bytes("\x00", encoding="ascii"))
 
+    # noinspection PyUnusedFunction
     def start_handler_thread(self):
+        """
+        Starts an asychronous thread which will
+        constantly listen to data sent.
+
+        Whenever received data triggers an event,
+        the proper function will run.
+        """
         self.handler_thread = Thread(target=self.handler)
         self.conn.flushInput()
         self.handler_thread.setName("UART_Listener")
@@ -41,21 +49,28 @@ class UART:
         print("Started listener")
 
     def handler(self):
+        """
+        The handler method which is run asynchronously (on a new thread).
+        """
         while True:
+            # Read byte
             req = self.conn.read(1)[0]
+            # If we have a command that matches this byte
             if req in self.handler_map:
+                # Get the matching (command, size) tuple
                 curr_handler = self.handler_map[req]
+                # If we need to read (the 'size' is not 0)
                 if curr_handler[1] != 0:
+                    # Then read the data
                     data = self.conn.read(curr_handler[1])
                 else:
+                    # Otherwise, no bytes
                     data = bytes()
+                # Pass the data to the matching function
                 curr_handler[0](data)
 
     def ping_handler(self, data: bytes):
         self.conn.write(data)
-
-    def conn_start_handler(self, data: bytes):
-        self.send_success()
 
     def set_algo_handler(self, data: bytes):
         algo_index: int = data[0]
