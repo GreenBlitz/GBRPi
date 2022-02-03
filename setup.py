@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='gbrpi',
-    version='0.0.3',
+    version='0.0.4',
     description='A python library for Raspberry Pi operations used for FRC',
     license='Apache License 2.0',
     packages=['gbrpi',
@@ -13,7 +13,7 @@ setup(
     author_email='idohaineman@gmail.com',
     keywords=['rpi', 'raspberry pi', 'frc'],
     url='https://github.com/GreenBlitz/GBRPi',
-    download_url='https://github.com/GreenBlitz/GBRPi/archive/v0.0.3.tar.gz',
+    download_url='https://github.com/GreenBlitz/GBRPi/archive/v0.0.4.tar.gz',
     install_requires=[
         'pynetworktables',
         'pigpio',
