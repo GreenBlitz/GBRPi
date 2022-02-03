@@ -1,3 +1,7 @@
+"""
+UART connection class.
+(i hate rs232.. all my homies hate rs232)
+"""
 import struct
 from threading import Thread
 from typing import List, Optional
@@ -10,6 +14,9 @@ from gbrpi.constants.uart import BAUD_RATE, DEFAULT_ALGO, DOUBLE_SIZE
 
 # noinspection PyUnusedClass
 class UART:
+    """
+    UART connection class.
+    """
 
     def __init__(self, dev_name: str, algo_list: List[str], ping_size: int, baud_rate: int = BAUD_RATE):
         self.conn: serial.Serial = serial.Serial(dev_name, baudrate=baud_rate)
@@ -70,6 +77,17 @@ class UART:
                 curr_handler[0](data)
 
     def ping_handler(self, data: bytes):
+        """
+        Send back the data that was received.
+        Our ping is a heartbeat packet.
+
+        That means that Motion will send us some random data, and
+        we need to send it back to them. They will make a check that
+        validates that the same data that was sent, was received.
+        That means that we are still alive.
+
+        :param data: The data that we got, and need send back to Motion.
+        """
         self.conn.write(data)
 
     def set_algo_handler(self, data: bytes):
