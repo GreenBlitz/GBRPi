@@ -33,7 +33,7 @@ class UART:
     def start_handler_thread(self):
         self.handler_thread = Thread(target=self.handler)
         self.conn.flushInput()
-        self.handler_thread.setName("UARTListenerd")
+        self.handler_thread.setName("UART_Listener")
         self.handler_thread.setDaemon(True)
         time.sleep(1)
         self.send_success()
