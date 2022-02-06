@@ -4,3 +4,4 @@ __pycache__/
 dist/
 gbrpi.egg-info/
 venv/
+build/
