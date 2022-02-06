@@ -32,9 +32,15 @@ class UART:
         self.handler_thread: Optional[Thread] = None
 
     def send_success(self):
+        """
+        Send byte 0x01.
+        """
         self.conn.write(bytes("\x01", encoding="ascii"))
 
     def send_fail(self):
+        """
+        Send byte 0x00.
+        """
         self.conn.write(bytes("\x00", encoding="ascii"))
 
     # noinspection PyUnusedFunction
@@ -91,6 +97,11 @@ class UART:
         self.conn.write(data)
 
     def set_algo_handler(self, data: bytes):
+        """
+        Set the current algorithm.
+
+        :param data: The index of the algorithm in the algorithm list to update to.
+        """
         algo_index: int = data[0]
         if algo_index >= len(self.algo_list):
             self.send_fail()
@@ -99,11 +110,21 @@ class UART:
         self.send_success()
 
     def get_handler(self, data: bytes):
+        """
+        Writes our latest data to the stream.
+        "GET" request.
+        """
+        # If there are NOT coordinates
         if self.latest_data is None \
                 or not isinstance(self.latest_data, list) \
                 or len(self.latest_data) != 3:
+            # Send a bunch of 0s instead
             self.conn.write(bytes("\x00" * (1 + DOUBLE_SIZE * 3), encoding="ascii"))
-            return
-        self.send_success()
-        for coord in self.latest_data:
-            self.conn.write(bytearray(struct.pack(">d", coord)))
+        else:
+            # If there ARE coordinates
+            # Send success
+            self.send_success()
+            # For each data point to send
+            for coord in self.latest_data:
+                # Send it via UART
+                self.conn.write(bytearray(struct.pack(">d", coord)))
