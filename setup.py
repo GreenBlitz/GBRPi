@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='gbrpi',
-    version='0.0.4',
+    version='0.0.5',
     description='A python library for Raspberry Pi operations used for FRC',
     license='Apache License 2.0',
     packages=['gbrpi',
