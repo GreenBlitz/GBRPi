@@ -1,13 +1,27 @@
+"""
+Setup file.
+"""
 from setuptools import setup
+
+"""
+Run the following command to create a Python wheel file (installation file):
+
+python setup.py bdist_wheel
+
+Then run the following command to install it:
+
+python -m pip install -U --force-reinstall 
+"""
 
 setup(
     name='gbrpi',
-    version='0.0.6',
+    version='0.0.7',
     description='A python library for Raspberry Pi operations used for FRC',
     license='Apache License 2.0',
     packages=['gbrpi',
               'gbrpi/electronics',
               'gbrpi/net',
+              'gbrpi/serial',
               'gbrpi/constants'],
     author='Ido Heinemann',
     author_email='idohaineman@gmail.com',
