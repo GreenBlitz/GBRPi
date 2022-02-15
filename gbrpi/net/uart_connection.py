@@ -18,12 +18,13 @@ class UART:
     UART connection class.
     """
 
-    def __init__(self, dev_name: str, algo_list: List[str], ping_size: int, baud_rate: int = BAUD_RATE):
+    def __init__(self, dev_name: str, algo_list: List[str], baud_rate: int = BAUD_RATE):
         self.conn: serial.Serial = serial.Serial(dev_name, baudrate=baud_rate)
         time.sleep(1)
         self.algo: str = DEFAULT_ALGO
         self.latest_data: Optional[List[int]] = None
         self.algo_list: List[str] = algo_list
+        ping_size: int = 5
         self.handler_map = {
             0: (self.ping_handler, ping_size),
             1: (self.get_handler, 0),
