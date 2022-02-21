@@ -60,7 +60,7 @@ class UART:
         time.sleep(1)
         self.send_success()
         self.handler_thread.start()
-        print("Started listener")
+        print("[UART_CONN] Started listener")
 
     def handler(self):
         """
@@ -70,9 +70,11 @@ class UART:
             # Read byte
             req = self.conn.read()[0]
             # If we have a command that matches this byte
+            print(f"[UART_CONN] Received data: {req}")
             if req in self.handler_map:
                 # Get the matching (command, size) tuple
                 curr_handler = self.handler_map[req]
+                print(f"[UART_CONN] Identified data as: {curr_handler}")
                 # If we need to read (the 'size' is not 0)
                 if curr_handler[1] != 0:
                     # Then read the data
@@ -95,6 +97,7 @@ class UART:
 
         :param data: The data that we got, and need send back to Motion.
         """
+        print(f"[UART_CONN] Pinged with: {data}")
         self.conn.write(data)
 
     def set_algo_handler(self, data: bytes):
