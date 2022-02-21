@@ -68,6 +68,7 @@ class UART:
         """
         while True:
             # Read byte
+            self.conn.flushInput()
             req = self.conn.read()[0]
             # If we have a command that matches this byte
             if req in self.handler_map:
