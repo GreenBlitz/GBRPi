@@ -65,6 +65,7 @@ class UART:
         """
         self.__handler_thread = Thread(target=self.__handler)
         self.__conn.flushInput()
+        self.__conn.flushOutput()
         self.__handler_thread.setName("UART_Listener")
         self.__handler_thread.setDaemon(True)
         time.sleep(1)
