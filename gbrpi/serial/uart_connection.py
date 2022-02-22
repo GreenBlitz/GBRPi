@@ -4,7 +4,7 @@ UART connection class.
 """
 import struct
 from threading import Thread
-from typing import List, Optional
+from typing import List, Optional, Union
 import time
 
 import serial
@@ -36,13 +36,13 @@ class UART:
         """
         Send byte 0x01.
         """
-        self.conn.write(bytes("\x01", encoding="ascii"))
+        self.__write(bytes("\x01", encoding="ascii"))
 
     def send_fail(self):
         """
         Send byte 0x00.
         """
-        self.conn.write(bytes("\x00", encoding="ascii"))
+        self.__write(bytes("\x00", encoding="ascii"))
 
     # noinspection PyUnusedFunction
     def start_handler_thread(self):
@@ -69,8 +69,7 @@ class UART:
         print("[UART_CONN] Handler function started (listener)")
         while True:
             # Read byte
-            self.conn.flushInput()
-            req = self.conn.read()[0]
+            req = self.__read()
             # If we have a command that matches this byte
             print(f"[UART_CONN] Received data: {req}")
             if req in self.handler_map:
@@ -100,7 +99,7 @@ class UART:
         :param data: The data that we got, and need send back to Motion.
         """
         print(f"[UART_CONN] Pinged with: {data}")
-        self.conn.write(data)
+        self.__write(data)
 
     def set_algo_handler(self, data: bytes):
         """
@@ -125,7 +124,7 @@ class UART:
                 or not isinstance(self.latest_data, list) \
                 or len(self.latest_data) != 3:
             # Send a bunch of 0s instead
-            self.conn.write(bytes("\x00" * (1 + DOUBLE_SIZE * 3), encoding="ascii"))
+            self.__write(bytes("\x00" * (1 + DOUBLE_SIZE * 3), encoding="ascii"))
         else:
             # If there ARE coordinates
             # Send success
@@ -133,4 +132,24 @@ class UART:
             # For each data point to send
             for coord in self.latest_data:
                 # Send it via UART
-                self.conn.write(bytearray(struct.pack(">d", coord)))
+                self.__write(bytearray(struct.pack(">d", coord)))
+                
+    def __write(self, data: Union[bytes, bytearray]) -> None:
+        """
+        Writes data to the serial buffer.
+        Wrapper function for writing.
+        
+        :param data: The data to write to the serial buffer.
+        """
+        self.conn.flushOutput()
+        self.conn.write(data)
+    
+    def __read(self) -> int:
+        """
+        Reads 1 byte from the serial buffer and returns the data.
+        This is a wrapper function for reading data (for example, to prevent constant buffer flushing).
+         
+        :return: The data on the buffer.
+        """
+        self.conn.flushInput()
+        return self.conn.read()[0]
