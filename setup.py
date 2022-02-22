@@ -10,7 +10,7 @@ python setup.py bdist_wheel
 
 Then run the following command to install it:
 
-python -m pip install -U --force-reinstall 
+python -m pip install -U --force-reinstall dist/<NAME_OF_OUTPUT_FILE>.whl
 """
 
 setup(
@@ -44,6 +44,8 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8'
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10'
     ],
 )
