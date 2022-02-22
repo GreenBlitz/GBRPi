@@ -60,12 +60,13 @@ class UART:
         time.sleep(1)
         self.send_success()
         self.handler_thread.start()
-        print("[UART_CONN] Started listener")
+        print("[UART_CONN] Started thread object")
 
     def handler(self):
         """
         The handler method which is run asynchronously (on a new thread).
         """
+        print("[UART_CONN] Handler function started (listener)")
         while True:
             # Read byte
             self.conn.flushInput()
