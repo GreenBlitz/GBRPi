@@ -21,15 +21,15 @@ class UART:
     def __init__(self, dev_name: str, algo_list: List[str], baud_rate: int = BAUD_RATE):
         self.__conn: serial.Serial = serial.Serial(dev_name, baudrate=baud_rate)
         time.sleep(1)
-        self.algo: str = DEFAULT_ALGO
         self.__latest_data: Optional[List[int]] = None
+        self.algo: str = DEFAULT_ALGO
         self.algo_list: List[str] = algo_list
         self.__handler_map = {
             0: (self.__ping_handler, PING_SIZE),
             1: (self.__get_handler, 0),
             2: (self.__set_algo_handler, 1)
         }
-        self.handler_thread: Optional[Thread] = None
+        self.__handler_thread: Optional[Thread] = None
 
     def update_data(self, updated_data: Optional[List[int]]):
         """
@@ -63,12 +63,12 @@ class UART:
         Whenever received data triggers an event,
         the proper function will run.
         """
-        self.handler_thread = Thread(target=self.__handler)
+        self.__handler_thread = Thread(target=self.__handler)
         self.__conn.flushInput()
-        self.handler_thread.setName("UART_Listener")
-        self.handler_thread.setDaemon(True)
+        self.__handler_thread.setName("UART_Listener")
+        self.__handler_thread.setDaemon(True)
         time.sleep(1)
-        self.handler_thread.start()
+        self.__handler_thread.start()
         print("[UART_CONN] Started thread object")
 
     def __handler(self):
