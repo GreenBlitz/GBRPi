@@ -139,8 +139,8 @@ class UART:
             self.__write(bytes("\x00" * (1 + DOUBLE_SIZE * 3), encoding="ascii"))
         else:
             # If there ARE coordinates
-            # Send success
-            self.__send_success()
+            # # Send success
+            # self.__send_success()
             # For each data point to send
             for coord in self.__latest_data:
                 # Send it via UART
