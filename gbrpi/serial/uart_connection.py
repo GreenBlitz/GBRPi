@@ -66,8 +66,8 @@ class UART:
         the proper function will run.
         """
         self.__handler_thread = Thread(target=self.__handler)
-        self.__conn.flushInput()
-        self.__conn.flushOutput()
+        self.__conn.reset_input_buffer()
+        self.__conn.reset_output_buffer()
         self.__handler_thread.setName("UART_Listener")
         self.__handler_thread.setDaemon(True)
         time.sleep(1)
@@ -158,7 +158,7 @@ class UART:
         print(f"[UART_CONN] Wrote the following data (from "
               f"{' -> '.join([debug_stack[i][3] for i in range(len(debug_stack))])}): {data}")
         # Flush and write
-        self.__conn.flushOutput()
+        self.__conn.reset_output_buffer()
         self.__conn.write(data)
     
     def __read(self, read_size: int = 1) -> Optional[bytes]:
