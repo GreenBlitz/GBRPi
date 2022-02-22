@@ -31,6 +31,17 @@ class UART:
         }
         self.handler_thread: Optional[Thread] = None
 
+    def update_data(self, updated_data: Optional[List[int]]):
+        """
+        Update the last data sent.
+
+        The way that our system works is that the data is cached here on the RPI.
+        Only if the RoboRIO requests this data, then it is sent to it.
+        If there is a surplus of information, then we update the information with
+        the most updated data to send.
+        """
+        self.__latest_data = updated_data
+
     def __send_success(self):
         """
         Send byte 0x01.
@@ -57,7 +68,6 @@ class UART:
         self.handler_thread.setName("UART_Listener")
         self.handler_thread.setDaemon(True)
         time.sleep(1)
-        self.__send_success()
         self.handler_thread.start()
         print("[UART_CONN] Started thread object")
 
