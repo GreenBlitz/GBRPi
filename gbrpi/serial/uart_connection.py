@@ -22,22 +22,22 @@ class UART:
         self.conn: serial.Serial = serial.Serial(dev_name, baudrate=baud_rate)
         time.sleep(1)
         self.algo: str = DEFAULT_ALGO
-        self.latest_data: Optional[List[int]] = None
+        self.__latest_data: Optional[List[int]] = None
         self.algo_list: List[str] = algo_list
         self.handler_map = {
-            0: (self.ping_handler, PING_SIZE),
-            1: (self.get_handler, 0),
-            2: (self.set_algo_handler, 1)
+            0: (self.__ping_handler, PING_SIZE),
+            1: (self.__get_handler, 0),
+            2: (self.__set_algo_handler, 1)
         }
         self.handler_thread: Optional[Thread] = None
 
-    def send_success(self):
+    def __send_success(self):
         """
         Send byte 0x01.
         """
         self.__write(bytes("\x01", encoding="ascii"))
 
-    def send_fail(self):
+    def __send_fail(self):
         """
         Send byte 0x00.
         """
@@ -52,16 +52,16 @@ class UART:
         Whenever received data triggers an event,
         the proper function will run.
         """
-        self.handler_thread = Thread(target=self.handler)
+        self.handler_thread = Thread(target=self.__handler)
         self.conn.flushInput()
         self.handler_thread.setName("UART_Listener")
         self.handler_thread.setDaemon(True)
         time.sleep(1)
-        self.send_success()
+        self.__send_success()
         self.handler_thread.start()
         print("[UART_CONN] Started thread object")
 
-    def handler(self):
+    def __handler(self):
         """
         The handler method which is run asynchronously (on a new thread).
         """
@@ -85,7 +85,7 @@ class UART:
                 # Pass the data to the matching function
                 curr_handler[0](data)
 
-    def ping_handler(self, data: bytes):
+    def __ping_handler(self, data: bytes):
         """
         Send back the data that was received.
         Our ping is a heartbeat packet.
@@ -100,7 +100,7 @@ class UART:
         print(f"[UART_CONN] Pinged with: {data}")
         self.__write(data)
 
-    def set_algo_handler(self, data: bytes):
+    def __set_algo_handler(self, data: bytes):
         """
         Set the current algorithm.
 
@@ -108,28 +108,28 @@ class UART:
         """
         algo_index: int = data[0]
         if algo_index >= len(self.algo_list):
-            self.send_fail()
+            self.__send_fail()
             return
         self.algo = self.algo_list[algo_index]
-        self.send_success()
+        self.__send_success()
 
-    def get_handler(self, data: bytes):
+    def __get_handler(self, data: bytes):
         """
         Writes our latest data to the stream.
         "GET" request.
         """
         # If there are NOT coordinates
-        if self.latest_data is None \
-                or not isinstance(self.latest_data, list) \
-                or len(self.latest_data) != 3:
+        if self.__latest_data is None \
+                or not isinstance(self.__latest_data, list) \
+                or len(self.__latest_data) != 3:
             # Send a bunch of 0s instead
             self.__write(bytes("\x00" * (1 + DOUBLE_SIZE * 3), encoding="ascii"))
         else:
             # If there ARE coordinates
             # Send success
-            self.send_success()
+            self.__send_success()
             # For each data point to send
-            for coord in self.latest_data:
+            for coord in self.__latest_data:
                 # Send it via UART
                 self.__write(bytearray(struct.pack(">d", coord)))
                 
