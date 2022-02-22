@@ -9,7 +9,7 @@ import time
 
 import serial
 
-from gbrpi.constants.uart import BAUD_RATE, DEFAULT_ALGO, DOUBLE_SIZE
+from gbrpi.constants.uart import BAUD_RATE, DEFAULT_ALGO, DOUBLE_SIZE, PING_SIZE
 
 
 # noinspection PyUnusedClass
@@ -24,9 +24,8 @@ class UART:
         self.algo: str = DEFAULT_ALGO
         self.latest_data: Optional[List[int]] = None
         self.algo_list: List[str] = algo_list
-        ping_size: int = 5
         self.handler_map = {
-            0: (self.ping_handler, ping_size),
+            0: (self.ping_handler, PING_SIZE),
             1: (self.get_handler, 0),
             2: (self.set_algo_handler, 1)
         }
