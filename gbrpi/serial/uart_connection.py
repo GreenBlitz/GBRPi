@@ -168,7 +168,6 @@ class UART:
          
         :return: The data on the buffer.
         """
-        self.__conn.flushInput()
         # Read the data
         read_data = self.__conn.read(read_size)
         # Debug stuff
