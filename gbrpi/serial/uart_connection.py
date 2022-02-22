@@ -31,6 +31,8 @@ class UART:
         }
         self.__handler_thread: Optional[Thread] = None
 
+    # API function
+    # noinspection PyUnusedFunction
     def update_data(self, updated_data: Optional[List[int]]):
         """
         Update the last data sent.
@@ -78,8 +80,8 @@ class UART:
         """
         print("[UART_CONN] Handler function started (listener)")
         while True:
-            # Read byte
-            req = self.__read()
+            # Read single byte
+            req = self.__read()[0]
             # If we have a command that matches this byte
             print(f"[UART_CONN] Received command: {req}")
             if req in self.__handler_map:
@@ -89,7 +91,7 @@ class UART:
                 # If we need to read (the 'size' is not 0)
                 if curr_handler[1] != 0:
                     # Then read the data
-                    data = self.__conn.read(curr_handler[1])
+                    data = self.__read(curr_handler[1])
                 else:
                     # Otherwise, no bytes
                     data = bytes()
@@ -153,11 +155,13 @@ class UART:
         """
         # Debugging info
         debug_stack = stack()
-        print(f"[UART_CONN] Wrote the following data (from {' -> '.join([debug_stack[i][3] for i in range(len(debug_stack))])}): {data}")
+        print(f"[UART_CONN] Wrote the following data (from "
+              f"{' -> '.join([debug_stack[i][3] for i in range(len(debug_stack))])}): {data}")
+        # Flush and write
         self.__conn.flushOutput()
         self.__conn.write(data)
     
-    def __read(self) -> int:
+    def __read(self, read_size: int = 1) -> Optional[bytes]:
         """
         Reads 1 byte from the serial buffer and returns the data.
         This is a wrapper function for reading data (for example, to prevent constant buffer flushing).
@@ -165,4 +169,11 @@ class UART:
         :return: The data on the buffer.
         """
         self.__conn.flushInput()
-        return self.__conn.read()[0]
+        # Read the data
+        read_data = self.__conn.read(read_size)
+        # Debug stuff
+        debug_stack = stack()
+        print(f"[UART_CONN] Read the following data of size {read_size} "
+              f"(from {' -> '.join([debug_stack[i][3] for i in range(len(debug_stack))])}): {read_data}")
+        # Return the data
+        return read_data
