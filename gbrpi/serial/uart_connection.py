@@ -19,12 +19,12 @@ class UART:
     """
 
     def __init__(self, dev_name: str, algo_list: List[str], baud_rate: int = BAUD_RATE):
-        self.conn: serial.Serial = serial.Serial(dev_name, baudrate=baud_rate)
+        self.__conn: serial.Serial = serial.Serial(dev_name, baudrate=baud_rate)
         time.sleep(1)
         self.algo: str = DEFAULT_ALGO
         self.__latest_data: Optional[List[int]] = None
         self.algo_list: List[str] = algo_list
-        self.handler_map = {
+        self.__handler_map = {
             0: (self.__ping_handler, PING_SIZE),
             1: (self.__get_handler, 0),
             2: (self.__set_algo_handler, 1)
@@ -64,7 +64,7 @@ class UART:
         the proper function will run.
         """
         self.handler_thread = Thread(target=self.__handler)
-        self.conn.flushInput()
+        self.__conn.flushInput()
         self.handler_thread.setName("UART_Listener")
         self.handler_thread.setDaemon(True)
         time.sleep(1)
@@ -81,14 +81,14 @@ class UART:
             req = self.__read()
             # If we have a command that matches this byte
             print(f"[UART_CONN] Received command: {req}")
-            if req in self.handler_map:
+            if req in self.__handler_map:
                 # Get the matching (command, size) tuple
-                curr_handler = self.handler_map[req]
+                curr_handler = self.__handler_map[req]
                 print(f"[UART_CONN] Identified command as: {curr_handler[0]}")
                 # If we need to read (the 'size' is not 0)
                 if curr_handler[1] != 0:
                     # Then read the data
-                    data = self.conn.read(curr_handler[1])
+                    data = self.__conn.read(curr_handler[1])
                 else:
                     # Otherwise, no bytes
                     data = bytes()
@@ -153,8 +153,8 @@ class UART:
         # Debugging info
         debug_stack = stack()
         print(f"[UART_CONN] Wrote the following data (from {' -> '.join([debug_stack[i][3] for i in range(len(debug_stack))])}): {data}")
-        self.conn.flushOutput()
-        self.conn.write(data)
+        self.__conn.flushOutput()
+        self.__conn.write(data)
     
     def __read(self) -> int:
         """
@@ -163,5 +163,5 @@ class UART:
          
         :return: The data on the buffer.
         """
-        self.conn.flushInput()
-        return self.conn.read()[0]
+        self.__conn.flushInput()
+        return self.__conn.read()[0]
