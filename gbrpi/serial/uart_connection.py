@@ -2,12 +2,12 @@
 UART connection class.
 (i hate rs232.. all my homies hate rs232)
 """
+import serial
 import struct
+import time
+from inspect import stack
 from threading import Thread
 from typing import List, Optional, Union
-import time
-
-import serial
 
 from gbrpi.constants.uart import BAUD_RATE, DEFAULT_ALGO, DOUBLE_SIZE, PING_SIZE
 
@@ -140,8 +140,10 @@ class UART:
         
         :param data: The data to write to the serial buffer.
         """
+        # Debugging info
+        debug_stack = stack()
+        print(f"[UART_CONN] Wrote the following data (from {' -> '.join([debug_stack[i][3] for i in range(len(debug_stack))])}): {data}")
         self.conn.flushOutput()
-        print(f"[UART_CONN] Wrote the following data: {data}")
         self.conn.write(data)
     
     def __read(self) -> int:
