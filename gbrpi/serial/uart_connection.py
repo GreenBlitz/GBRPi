@@ -70,11 +70,11 @@ class UART:
             # Read byte
             req = self.__read()
             # If we have a command that matches this byte
-            print(f"[UART_CONN] Received data: {req}")
+            print(f"[UART_CONN] Received command: {req}")
             if req in self.handler_map:
                 # Get the matching (command, size) tuple
                 curr_handler = self.handler_map[req]
-                print(f"[UART_CONN] Identified data as: {curr_handler}")
+                print(f"[UART_CONN] Identified command as: {curr_handler[0]}")
                 # If we need to read (the 'size' is not 0)
                 if curr_handler[1] != 0:
                     # Then read the data
