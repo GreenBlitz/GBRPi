@@ -141,6 +141,7 @@ class UART:
         :param data: The data to write to the serial buffer.
         """
         self.conn.flushOutput()
+        print(f"[UART_CONN] Wrote the following data: {data}")
         self.conn.write(data)
     
     def __read(self) -> int:
