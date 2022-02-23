@@ -15,7 +15,7 @@ python -m pip install -U --force-reinstall dist/<NAME_OF_OUTPUT_FILE>.whl
 
 setup(
     name='gbrpi',
-    version='0.0.7',
+    version='0.0.8',
     description='A python library for Raspberry Pi operations used for FRC',
     license='Apache License 2.0',
     packages=['gbrpi',

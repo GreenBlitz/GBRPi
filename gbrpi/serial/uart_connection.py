@@ -7,7 +7,7 @@ import struct
 import time
 from inspect import stack
 from threading import Thread
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Iterable
 
 from gbrpi.constants.uart import BAUD_RATE, DEFAULT_ALGO, DOUBLE_SIZE, PING_SIZE
 
@@ -21,7 +21,7 @@ class UART:
     def __init__(self, dev_name: str, algo_list: List[str], baud_rate: int = BAUD_RATE):
         self.__conn: serial.Serial = serial.Serial(dev_name, baudrate=baud_rate)
         time.sleep(1)
-        self.__latest_data: Optional[List[int]] = None
+        self.__latest_data: Optional[Iterable[int]] = None
         self.algo: str = DEFAULT_ALGO
         self.algo_list: List[str] = algo_list
         self.__handler_map = {
@@ -32,8 +32,8 @@ class UART:
         self.__handler_thread: Optional[Thread] = None
 
     # API function
-    # noinspection PyUnusedFunction
-    def update_data(self, updated_data: Optional[List[int]]):
+    # noinspection PyUnusedFunction,PySameParameterValue
+    def update_data(self, updated_data: Optional[Iterable[int]]) -> None:
         """
         Update the last data sent.
 
@@ -43,6 +43,18 @@ class UART:
         the most updated data to send.
         """
         self.__latest_data = updated_data
+
+    # API function
+    # noinspection PyUnusedFunction
+    def send_fail(self) -> None:
+        """
+        Sends a fail status code via UART.
+        External API wrapper.
+        """
+        # Send the fail
+        self.__send_fail()
+        # Update the last data
+        self.update_data(None)
 
     def __send_success(self):
         """
@@ -126,6 +138,7 @@ class UART:
         self.algo = self.algo_list[algo_index]
         self.__send_success()
 
+    # noinspection PyUnusedLocal
     def __get_handler(self, data: bytes):
         """
         Writes our latest data to the stream.
@@ -133,14 +146,14 @@ class UART:
         """
         # If there are NOT coordinates
         if self.__latest_data is None \
-                or not isinstance(self.__latest_data, list) \
+                or not isinstance(self.__latest_data, Iterable) \
                 or len(self.__latest_data) != 3:
             # Send a bunch of 0s instead
             self.__write(bytes("\x00" * (1 + DOUBLE_SIZE * 3), encoding="ascii"))
         else:
             # If there ARE coordinates
-            # # Send success
-            # self.__send_success()
+            # Send success
+            self.__send_success()
             # For each data point to send
             for coord in self.__latest_data:
                 # Send it via UART
