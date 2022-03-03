@@ -9,7 +9,7 @@ from inspect import stack
 from threading import Thread
 from typing import List, Optional, Union, Iterable
 
-from gbrpi.constants.uart import BAUD_RATE, DEFAULT_ALGO, DOUBLE_SIZE, PING_SIZE
+from gbrpi.constants.uart import BAUD_RATE, DEFAULT_ALGO, DEFAULT_CAM, DOUBLE_SIZE, PING_SIZE
 
 
 # noinspection PyUnusedClass
@@ -23,11 +23,13 @@ class UART:
         time.sleep(1)
         self.__latest_data: Optional[Iterable[int]] = None
         self.algo: str = DEFAULT_ALGO
+        self.cam: int = DEFAULT_CAM
         self.algo_list: List[str] = algo_list
         self.__handler_map = {
             0: (self.__ping_handler, PING_SIZE),
             1: (self.__get_handler, 0),
-            2: (self.__set_algo_handler, 1)
+            2: (self.__set_algo_handler, 1),
+            3: (self.__set_cam, 1),
         }
         self.__handler_thread: Optional[Thread] = None
 
@@ -137,6 +139,15 @@ class UART:
             return
         self.algo = self.algo_list[algo_index]
         self.__send_success()
+
+    def __set_cam(self, data: bytes):
+        """
+        Set the current camera to stream from.
+
+        :param data: The index of the camera to update to.
+        """
+        self.cam = data[0]
+        # self.__send_success()
 
     # noinspection PyUnusedLocal
     def __get_handler(self, data: bytes):
